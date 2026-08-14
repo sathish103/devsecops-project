@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: devsecops
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: order-service
+
+  template:
+    metadata:
+      labels:
+        app: order-service
+
+    spec:
+      containers:
+        - name: order-service
+          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-order-service:latest
+
+          ports:
+            - containerPort: 8083
+
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: devsecops-secrets
+                  key: DB_HOST
+
+            - name: DB_NAME
+              value: orderdb
+
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: devsecops-secrets
+                  key: DB_PORT
+
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: devsecops-secrets
+                  key: DB_USERNAME
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: devsecops-secrets
+                  key: DB_PASSWORD
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: devsecops-secrets
+                  key: JWT_SECRET
+                  
+            - name: PRODUCT_SERVICE_URL
+              value: http://product-service:8082
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: devsecops
+
+spec:
+  selector:
+    app: order-service
+
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+
+  type: ClusterIP
