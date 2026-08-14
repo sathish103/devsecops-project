@@ -1,4 +1,4 @@
-```javascript
+
 import axios from 'axios'
 
 export const userApi = axios.create({
@@ -35,4 +35,4 @@ const addAuthInterceptor = (api) => {
 addAuthInterceptor(userApi)
 addAuthInterceptor(productApi)
 addAuthInterceptor(orderApi)
-```
+
