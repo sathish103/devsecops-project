@@ -1,0 +1,64 @@
+# =========================
+# Java / Spring Boot
+# =========================
+**/target/
+*.class
+*.jar
+*.war
+*.log
+
+# Maven
+.mvn/timing.properties
+
+# =========================
+# Node / React / Vite
+# =========================
+**/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE
+# =========================
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs / temporary files
+# =========================
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# =========================
+# AWS / CLI credentials
+# =========================
+.aws/
+credentials
+
+
+# =========================
+# Terraform (if added later)
+# =========================
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example

@@ -1,0 +1,21 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:orderdb}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: ${JWT_SECRET:changeit}
+
+product:
+  service:
+    url: ${PRODUCT_SERVICE_URL:http://product-service:8082}
+
+cors:
+  allowed-origins: http://localhost:5173
