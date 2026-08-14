@@ -1,27 +1,17 @@
+```javascript
 import axios from 'axios'
 
-const USER_API =
-  import.meta.env.VITE_USER_API || 'http://localhost:8081'
-
-const PRODUCT_API =
-  import.meta.env.VITE_PRODUCT_API || 'http://localhost:8082'
-
-const ORDER_API =
-  import.meta.env.VITE_ORDER_API || 'http://localhost:8083'
-
-
 export const userApi = axios.create({
-  baseURL: USER_API,
+  baseURL: '',
 })
 
 export const productApi = axios.create({
-  baseURL: PRODUCT_API,
+  baseURL: '',
 })
 
 export const orderApi = axios.create({
-  baseURL: ORDER_API,
+  baseURL: '',
 })
-
 
 const addAuthInterceptor = (api) => {
   api.interceptors.request.use(
@@ -42,7 +32,7 @@ const addAuthInterceptor = (api) => {
   return api
 }
 
-
 addAuthInterceptor(userApi)
 addAuthInterceptor(productApi)
 addAuthInterceptor(orderApi)
+```
