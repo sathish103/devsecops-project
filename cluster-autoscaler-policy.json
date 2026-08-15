@@ -1,5 +1,3 @@
-
-
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -13,7 +11,8 @@
         "autoscaling:DescribeTags",
         "ec2:DescribeImages",
         "ec2:DescribeInstanceTypes",
-        "ec2:DescribeLaunchTemplateVersions"
+        "ec2:DescribeLaunchTemplateVersions",
+        "eks:DescribeNodegroup"
       ],
       "Resource": "*"
     },
@@ -26,12 +25,10 @@
       "Resource": "*",
       "Condition": {
         "StringEquals": {
-          "aws:ResourceTag/k8s.io/cluster-autoscaler/enabled": "true",
-          "aws:ResourceTag/k8s.io/cluster-autoscaler/devsecops-eks": "owned"
+          "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/enabled": "true",
+          "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/devsecops-eks": "owned"
         }
       }
     }
   ]
 }
-
-
