@@ -1,0 +1,17 @@
+apiVersion: gateway.networking.io/v1
+kind: HTTPRoute
+metadata:
+  name: frontend-route
+  namespace: devsecops
+
+spec:
+  parentRefs:
+    - name: devsecops-gateway
+  rules:
+    - matches:
+      - path:
+          type: PAthPrefixx
+          value: /
+      backendRefs:
+        - name: frontend-service
+          port: 80
