@@ -33,7 +33,7 @@ metadata:
   namespace: devsecops
 
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: frontend
 
