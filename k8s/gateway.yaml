@@ -4,12 +4,12 @@ metadata:
   name: devsecops-gateway
   namespace: devsecops
 spec:
-  gatewayclass: aws-alb
+  gatewayClassName: aws-alb
 
   listeners:
     - name: http
       protocal: HTTPS
       port: 80
       allowedRoutes:
-        namespace:
-          from: same
+        namespaces:
+          from: Same
