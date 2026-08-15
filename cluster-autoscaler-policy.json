@@ -1,4 +1,4 @@
-# cluster-autoscaler-policy
+
 
 {
   "Version": "2012-10-17",
@@ -35,6 +35,3 @@
 }
 
 
-// aws iam create-policy \
-//   --policy-name AmazonEKSClusterAutoscalerPolicy \
-//   --policy-document file://cluster-autoscaler-policy.json
