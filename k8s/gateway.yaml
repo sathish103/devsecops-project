@@ -8,7 +8,7 @@ spec:
 
   listeners:
     - name: http
-      protocal: HTTPS
+      protocol: HTTPS
       port: 80
       allowedRoutes:
         namespaces:
