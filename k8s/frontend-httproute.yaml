@@ -10,7 +10,7 @@ spec:
   rules:
     - matches:
       - path:
-          type: PAthPrefixx
+          type: PathPrefix
           value: /
       backendRefs:
         - name: frontend-service
