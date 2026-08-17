@@ -5,3 +5,9 @@ metadata:
   namespace: devsecops
 spec:
   scheme: internet-facing
+  
+  listenerConfigurations:
+    - protocolPort: HTTPS:443
+      defaultCertificate: arn:aws:acm:ap-south-1:425034746703:certificate/9c86573d-01c5-42ca-b3ac-2d5eeff44f23
+
+  
