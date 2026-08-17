@@ -9,6 +9,10 @@ spec:
     name: frontend-service
   defaultConfiguration:
     targetType: ip
+    healthCheckConfig:
+      path: /
+      protocol: HTTP
+      port: 80
 ---
 apiVersion: gateway.k8s.aws/v1beta1
 kind: TargetGroupConfiguration
@@ -20,6 +24,10 @@ spec:
     name: user-service
   defaultConfiguration:
     targetType: ip
+    healthCheckConfig:
+      path: /actuator/health
+      protocol: HTTP
+      port: 8081
 ---
 apiVersion: gateway.k8s.aws/v1beta1
 kind: TargetGroupConfiguration
@@ -31,6 +39,11 @@ spec:
     name: product-service
   defaultConfiguration:
     targetType: ip
+    healthCheckConfig:
+      path: /actuator/health
+      protocol: HTTP
+      port: 8082
+
 ---
 apiVersion: gateway.k8s.aws/v1beta1
 kind: TargetGroupConfiguration
@@ -42,3 +55,7 @@ spec:
     name: order-service
   defaultConfiguration:
     targetType: ip
+    healthCheckConfig:
+      path: /actuator/health
+      protocol: HTTP
+      port: 8083
