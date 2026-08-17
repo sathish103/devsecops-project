@@ -1,0 +1,44 @@
+
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: frontend-tg
+  namespace: devsecops
+spec:
+  targetReference:
+    name: frontend-service
+  defaultConfiguration:
+    targetType: ip
+---
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: user-tg
+  namespace: devsecops
+spec:
+  targetReference:
+    name: user-service
+  defaultConfiguration:
+    targetType: ip
+---
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: product-tg
+  namespace: devsecops
+spec:
+  targetReference:
+    name: product-service
+  defaultConfiguration:
+    targetType: ip
+---
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: order-tg
+  namespace: devsecops
+spec:
+  targetReference:
+    name: order-service
+  defaultConfiguration:
+    targetType: ip
