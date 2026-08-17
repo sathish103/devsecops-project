@@ -6,6 +6,12 @@ metadata:
 spec:
   gatewayClassName: aws-alb
 
+  infrastructure:
+    parametersRef:
+      group: gateway.k8s.aws
+      kind: LoadBalancerConfiguration
+      name: devsecops-alb-config
+
   listeners:
     - name: http
       protocol: HTTP
