@@ -38,6 +38,7 @@ public class SecurityConfig {
                     "/api/products/**"
                 ).permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/").permitAll()
                 .anyRequest().authenticated()
             );
 
