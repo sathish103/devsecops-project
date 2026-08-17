@@ -37,6 +37,7 @@ public class SecurityConfig {
                     HttpMethod.GET,
                     "/api/products/**"
                 ).permitAll()
+                .requestMatchers("/actuator/health").permitAll()
                 .anyRequest().authenticated()
             );
 
