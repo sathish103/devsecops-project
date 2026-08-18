@@ -39,6 +39,11 @@ frontend/.vite/
 .DS_Store
 Thumbs.db
 
+# Kubernetes secrets
+k8s/*secret*.yaml
+k8s/*secrets*.yaml
+secrets.text
+
 # =========================
 # Logs / temporary files
 # =========================
