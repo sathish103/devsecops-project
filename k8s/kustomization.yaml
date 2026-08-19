@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: devsecops
+
+resources:
+  - namespace.yaml
+
+  - user-service.yaml
+  - product-service.yaml
+  - order-service.yaml
+  - frontend.yaml
+
+  - gatewayclass.yaml
+  - gateway.yaml
+
+  - frontend-httproute.yaml
+  - user-httproute.yaml
+  - product-httproute.yaml
+  - order-httproute.yaml
+
+  - target-group-config.yaml
+  - loadbalancer-config.yaml
+
+images:
+  - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service
+    newTag: "31"
+
+  - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-product-service
+    newTag: "31"
+
+  - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-order-service
+    newTag: "31"
+
+  - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-frontend
+    newTag: "31"

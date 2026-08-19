@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-product-service:31
+          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-product-service
 
           ports:
             - containerPort: 8082
