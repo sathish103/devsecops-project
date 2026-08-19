@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-order-service:latest
+          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-order-service:30
 
           ports:
             - containerPort: 8083

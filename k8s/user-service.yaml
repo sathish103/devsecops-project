@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service:latest
+          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service:30
 
           ports:
             - containerPort: 8081
