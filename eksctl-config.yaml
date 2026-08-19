@@ -20,5 +20,5 @@ managedNodeGroups:
     instanceType: t3.small
     desiredCapacity: 1
     minSize: 1
-    maxSize: 3
+    maxSize: 4
     privateNetworking: true
