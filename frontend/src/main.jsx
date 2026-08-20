@@ -13,6 +13,7 @@ function App(){
     <BrowserRouter>
       <nav style={{padding:10}}>
         <Link to="/">Products</Link> | <Link to="/login">Login</Link> | <Link to="/register">Register</Link> | <Link to="/my-orders">My Orders</Link>
+        <div>Frontend Release: v39</div>
         {token && <button onClick={() => { logout(); window.location.href = '/login' }}>Logout</button>}
       </nav>
       <Routes>
