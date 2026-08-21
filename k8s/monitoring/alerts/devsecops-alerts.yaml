@@ -16,7 +16,7 @@ spec:
               namespace= "devsecops"
             }
             <
-            kube_deployment_spec_replicas {
+            kube_deployment_spec_replicas_available {
               namespace= "devsecops"
             }
           for: 5m
