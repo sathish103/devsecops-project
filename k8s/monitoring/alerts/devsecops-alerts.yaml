@@ -1,132 +1,52 @@
-apiVersion: monitoring.coreos.com/v1
-kind: PrometheusRule
-metadata:
-  name: devsecops-production-alerts
-  namespace: monitoring
-  labels:
-    release: monitoring
+grafana:
+  enabled: true
 
-spec: 
-  groups:
-    - name: devsecops.application
-      rules:
-        - alert: DevSecOpsDeploymentUnavailable
-          expr: |
-            kube_deployment_status_replicas_available{
-              namespace= "devsecops"
-            }
-            <
-            kube_deployment_spec_replicas {
-              namespace= "devsecops"
-            }
-          for: 5m
-          labels:
-            severity: critical
-            team: devsecops
-          annotations:
-            summary: "Deployment has unavailable replicas"
-            description: "Deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} has fewer available replicas than desired for more than 5 minutes."
-      
-        - alert: DevSecOpsPodRestarting
-          expr: |
-            increase(
-              kube_pod_container_status_restarts_total {
-                namespace= "devsecops"
-              }[10m]
-            ) > 3
-          for: 5m
-          labels:
-            severity: warning
-            team: devsecops
-          annotations:
-            summary: "Pod is restarting repeatedly"
-            description: "Pod {{ $labels.pod }} in container {{ $labels.container }} restarted more than 3 times within 10 minutes."
+prometheus:
+  enabled: true
 
-        - alert: DevSecOpsPodNotReady
-          expr: |
-            kube_pod_status_ready{
-              namespace="devsecops",
-              condition="true"
-            } == 0
-          for: 5m
-          labels:
-            severity: critical
-            team: devsecops
-          annotations:
-            summary: "DevSecOps pod is not ready"
-            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been not ready for more than 5 minutes."
+  prometheusSpec:
+    retention: 7d
 
-    - name: devsecops.infrastructure
-      rules:
-        - alert: KubernetesNodeMemoryHigh
-          expr: |
-            (
-              1 -
-              node_memory_MemAvailable_bytes
-              /
-              node_memory_MemTotal_bytes
-            ) * 100 > 85
-          for: 10m
-          labels:
-            severity: warning
-            team: devsecops
-          annotations:
-            summary: "Kubernetes node memory usage is high"
-            description: "Node {{ $labels.instance }} memory usage has been above 85% for more than 10 minutes."
-        
-        - alert: KubernetesNodeMemoryCritical
-          expr: |
-            (
-              1 -
-              node_memory_MemAvailable_bytes
-              /
-              node_memory_MemTotal_bytes
-            ) * 100 > 95
-          for: 5m
-          labels:
-            severity: critical
-            team: devsecops
-          annotations:
-            summary: "Kubernetes node memory usage is critical"
-            description: "Node {{ $labels.instance }} memory usage has been above 95% for more than 5 minutes."
+    serviceMonitorSelector: {}
 
-        - alert: KubernetesNodeCPUHigh
-          expr: |
-            100 - (
-              avg by (instance) (
-                rate(node_cpu_seconds_total{
-                  mode="idle"
-                }[5m])
-              ) * 100
-            ) > 85
-          for: 10m
-          labels:
-            severity: warning
-            team: devsecops
-          annotations:
-            summary: "Kubernetes node CPU usage is high"
-            description: "Node {{ $labels.instance }} CPU usage has been above 85% for more than 10 minutes."
-        
-    - name: devsecops.monitoring
-      rules: 
-        - alert: PrometheusTargetDown
-          expr: |
-            up == 0
-          for: 5m
-          labels:
-            severity: critical
-            team: devsecops
-          annotations:
-            summary: "Prometheus target is down"
-            description: "Prometheus target {{ $labels.job }} at {{ $labels.instance }} has been down for more than 5 minutes."
+    serviceMonitorNamespaceSelector: {}
 
-        - alert: PrometheusTooManyTargetsDown
-          expr: |
-            count(up == 0) > 3
-          for: 5m
-          labels:
-            severity: critical
-            team: devsecops
-          annotations:
-            summary: "Multiple Prometheus targets are down"
-            description: "More than 3 Prometheus targets are currently down."
+    ruleSelector:
+      matchLabels:
+        release: monitoring
+
+    ruleNamespaceSelector: {}
+
+alertmanager:
+  enabled: true
+
+  alertmanagerSpec:
+    replicas: 1
+
+    secrets:
+      - alertmanager-gmail
+
+  config:
+    global:
+      resolve_timeout: 5m
+      smtp_smarthost: smtp.gmail.com:587
+      smtp_from: sathishcool444@gmail.com
+      smtp_auth_username: sathishcool444@gmail.com
+      smtp_auth_password_file: /etc/alertmanager/secrets/alertmanager-gmail/smtp-auth-password
+      smtp_require_tls: true
+
+    route:
+      receiver: devsecops-gmail
+      group_by:
+        - alertname
+        - namespace
+        - severity
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+
+    receivers:
+      - name: devsecops-gmail
+        email_configs:
+          - to: sathishcool444@gmail.com
+            send_resolved: true
