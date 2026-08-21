@@ -20,18 +20,6 @@ prometheus:
 alertmanager:
   enabled: true
 
-  alertmanagerSpec:
-    replicas: 1
-
-    # Mount the Gmail SMTP Secret into Alertmanager.
-    secrets:
-      - alertmanager-gmail
-
-    # We are NOT using AlertmanagerConfig CRDs.
-    alertmanagerConfigSelector: {}
-
-    alertmanagerConfigNamespaceSelector: {}
-
   config:
     global:
       resolve_timeout: 5m
@@ -44,22 +32,15 @@ alertmanager:
 
     route:
       receiver: devsecops-gmail
-
       group_by:
         - alertname
         - namespace
         - severity
-
       group_wait: 30s
       group_interval: 5m
       repeat_interval: 12h
 
     receivers:
-      # IMPORTANT:
-      # Keep the null receiver defined.
-      # This prevents the "undefined receiver null" error.
-      - name: null
-
       - name: devsecops-gmail
         email_configs:
           - to: sathishcool444@gmail.com
@@ -67,18 +48,23 @@ alertmanager:
 
     inhibit_rules:
       - source_matchers:
-          - 'severity = critical'
+          - severity = critical
         target_matchers:
-          - 'severity =~ warning|info'
+          - severity =~ warning|info
         equal:
           - namespace
           - alertname
 
       - source_matchers:
-          - 'severity = warning'
+          - severity = warning
         target_matchers:
-          - 'severity = info'
+          - severity = info
         equal:
           - namespace
           - alertname
-        
+
+  alertmanagerSpec:
+    replicas: 1
+
+    secrets:
+      - alertmanager-gmail
