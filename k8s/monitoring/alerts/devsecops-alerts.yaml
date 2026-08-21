@@ -12,11 +12,11 @@ spec:
       rules:
         - alert: DevSecOpsDeploymentUnavailable
           expr: |
-            kube_deployment_status_available{
+            kube_deployment_status_replicas_available{
               namespace= "devsecops"
             }
             <
-            kube_deployment_spec_replicas_available {
+            kube_deployment_spec_replicas {
               namespace= "devsecops"
             }
           for: 5m
