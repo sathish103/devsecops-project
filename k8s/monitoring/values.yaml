@@ -1,37 +1,21 @@
-grafana:
-  enabled: true
-
-prometheus:
-  enabled: true
-
-  prometheusSpec:
-    retention: 7d
-
-    serviceMonitorSelector: {}
-
-    serviceMonitorNamespaceSelector: {}
-
-    ruleSelector:
-      matchLabels:
-        release: monitoring
-
-    ruleNamespaceSelector: {}
-
+cat > monitoring-values.yaml <<'EOF'
 alertmanager:
   enabled: true
 
+  alertmanagerSpec:
+    replicas: 1
+    secrets:
+      - alertmanager-gmail
+
   config:
     global:
-      resolve_timeout: 5m
-
-      smtp_smarthost: smtp.gmail.com:587
-      smtp_from: sathishcool444@gmail.com
-      smtp_auth_username: sathishcool444@gmail.com
-      smtp_auth_password_file: /etc/alertmanager/secrets/alertmanager-gmail/smtp-auth-password
+      smtp_smarthost: 'smtp.gmail.com:587'
+      smtp_from: 'sathishcool444@gmail.com'
+      smtp_auth_username: 'sathishcool444@gmail.com'
+      smtp_auth_password_file: '/etc/alertmanager/secrets/alertmanager-gmail/smtp-auth-password'
       smtp_require_tls: true
 
     route:
-      receiver: devsecops-gmail
       group_by:
         - alertname
         - namespace
@@ -39,32 +23,43 @@ alertmanager:
       group_wait: 30s
       group_interval: 5m
       repeat_interval: 12h
+      receiver: 'devsecops-gmail'
+      routes:
+        - matchers:
+            - 'alertname = "Watchdog"'
+          receiver: 'null'
 
     receivers:
-      - name: devsecops-gmail
+      - name: 'devsecops-gmail'
         email_configs:
-          - to: sathishcool444@gmail.com
+          - to: 'sathishcool444@gmail.com'
             send_resolved: true
+
+      - name: 'null'
 
     inhibit_rules:
       - source_matchers:
-          - severity = critical
+          - 'severity = critical'
         target_matchers:
-          - severity =~ warning|info
+          - 'severity =~ warning|info'
         equal:
           - namespace
           - alertname
 
       - source_matchers:
-          - severity = warning
+          - 'severity = warning'
         target_matchers:
-          - severity = info
+          - 'severity = info'
         equal:
           - namespace
           - alertname
 
-  alertmanagerSpec:
-    replicas: 1
+    templates:
+      - '/etc/alertmanager/config/*.tmpl'
 
-    secrets:
-      - alertmanager-gmail
+grafana:
+  enabled: true
+
+prometheus:
+  enabled: true
+EOF
