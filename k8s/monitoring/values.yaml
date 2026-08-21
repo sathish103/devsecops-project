@@ -1,7 +1,6 @@
-cat > monitoring-values.yaml <<'EOF'
+
 alertmanager:
   enabled: true
-
   alertmanagerSpec:
     replicas: 1
     secrets:
@@ -62,4 +61,3 @@ grafana:
 
 prometheus:
   enabled: true
-EOF
