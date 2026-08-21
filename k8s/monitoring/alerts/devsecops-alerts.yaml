@@ -12,7 +12,7 @@ spec:
       rules:
         - alert: DevSecOpsDeploymentUnavailable
           expr: |
-            kube_deployemnt_status_available{
+            kube_deployment_status_available{
               namespace= "devsecops"
             }
             <
