@@ -1,13 +1,10 @@
 
 alertmanager:
   enabled: true
-  alertmanagerSpec:
-    replicas: 1
-    secrets:
-      - alertmanager-gmail
 
   config:
     global:
+      resolve_timeout: 5m
       smtp_smarthost: 'smtp.gmail.com:587'
       smtp_from: 'sathishcool444@gmail.com'
       smtp_auth_username: 'sathishcool444@gmail.com'
@@ -24,9 +21,9 @@ alertmanager:
       repeat_interval: 12h
       receiver: 'devsecops-gmail'
       routes:
-        - matchers:
+        - receiver: 'null'
+          matchers:
             - 'alertname = "Watchdog"'
-          receiver: 'null'
 
     receivers:
       - name: 'devsecops-gmail'
@@ -36,25 +33,10 @@ alertmanager:
 
       - name: 'null'
 
-    inhibit_rules:
-      - source_matchers:
-          - 'severity = critical'
-        target_matchers:
-          - 'severity =~ warning|info'
-        equal:
-          - namespace
-          - alertname
-
-      - source_matchers:
-          - 'severity = warning'
-        target_matchers:
-          - 'severity = info'
-        equal:
-          - namespace
-          - alertname
-
-    templates:
-      - '/etc/alertmanager/config/*.tmpl'
+  alertmanagerSpec:
+    replicas: 1
+    secrets:
+      - alertmanager-gmail
 
 grafana:
   enabled: true
