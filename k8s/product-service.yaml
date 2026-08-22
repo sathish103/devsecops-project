@@ -95,6 +95,8 @@ kind: Service
 metadata:
   name: product-service
   namespace: devsecops
+  labels:
+    app: product-service
 
 spec:
   selector:
