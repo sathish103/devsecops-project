@@ -22,6 +22,8 @@ resources:
   - target-group-config.yaml
   - loadbalancer-config.yaml
 
+  - monitoring/servicemonitor.yaml
+
 images:
   - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service
     newTag: "41"
