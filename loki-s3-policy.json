@@ -1,9 +1,7 @@
-
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "LokiBucketAccess",
       "Effect": "Allow",
       "Action": [
         "s3:ListBucket",
@@ -12,7 +10,6 @@
       "Resource": "arn:aws:s3:::devsecops-loki-ap-south-1-425034746703"
     },
     {
-      "Sid": "LokiObjectAccess",
       "Effect": "Allow",
       "Action": [
         "s3:PutObject",
