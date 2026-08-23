@@ -24,6 +24,7 @@ resources:
 
   - monitoring/servicemonitor.yaml
   - monitoring/alerts/devsecops-alerts.yaml
+  - monitoring/loki/serviceaccount.yaml
 
 images:
   - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service

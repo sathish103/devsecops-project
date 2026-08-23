@@ -27,7 +27,7 @@ loki:
           period: 24h
 
 serviceAccount:
-  create: true
+  create: false
   name: loki
 
   automountServiceAccountToken: true
