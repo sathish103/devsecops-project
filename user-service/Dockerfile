@@ -12,7 +12,7 @@ WORKDIR /app
 
 # OpenTelemetry Java Agent
 ARG OTEL_AGENT_VERSION=2.21.0
-ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_AGENT_VERSION}/opentelemetry-javaagent.jar /otel/opentelemetry-javaagent.jar
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.29.0/opentelemetry-javaagent.jar /otel/opentelemetry-javaagent.jar
 
 
 COPY --from=build /app/target/*.jar app.jar
