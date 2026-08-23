@@ -4,12 +4,15 @@
     {
       "Effect": "Allow",
       "Principal": {
-        "Service": "pods.eks.amazonaws.com"
+        "Federated": "arn:aws:iam::425034746703:oidc-provider/oidc.eks.ap-south-1.amazonaws.com/id/C41965C8A151B747CE6CB0974F195DC1"
       },
-      "Action": [
-        "sts:AssumeRole",
-        "sts:TagSession"
-      ]
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.ap-south-1.amazonaws.com/id/C41965C8A151B747CE6CB0974F195DC1:aud": "sts.amazonaws.com",
+          "oidc.eks.ap-south-1.amazonaws.com/id/C41965C8A151B747CE6CB0974F195DC1:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+        }
+      }
     }
   ]
 }
