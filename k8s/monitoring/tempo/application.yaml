@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tempo
+  namespace: argocd
+
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tempo
+
+  sources:
+
+    # Grafana Tempo Helm chart
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: tempo
+      targetRevision: 1.24.1
+      helm:
+        releaseName: tempo
+        valueFiles:
+          - $values/k8s/monitoring/tempo/values.yaml
+
+    # Git repository containing Tempo values
+    - repoURL: git@github.com:sathish103/devsecops-project.git
+      targetRevision: main
+      ref: values
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true
