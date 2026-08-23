@@ -3,22 +3,29 @@ kind: Application
 metadata:
   name: alloy
   namespace: argocd
+
 spec:
   project: default
-
-  source:
-    repoURL: git@github.com:sathish103/devsecops-project.git
-    targetRevision: main
-    path: k8s/monitoring/alloy
-
-    helm:
-      releaseName: alloy
-      valueFiles:
-        - values.yaml
 
   destination:
     server: https://kubernetes.default.svc
     namespace: alloy
+
+  sources:
+
+    # Grafana Alloy Helm chart
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: alloy
+      targetRevision: 1.11.1
+      helm:
+        releaseName: alloy
+        valueFiles:
+          - $values/k8s/monitoring/alloy/values.yaml
+
+    # Git repository containing our values.yaml
+    - repoURL: git@github.com:sathish103/devsecops-project.git
+      targetRevision: main
+      ref: values
 
   syncPolicy:
     automated:
