@@ -27,6 +27,13 @@ spec:
         - name: user-service
           image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service
 
+          command:
+            - java
+          args:
+            - "-javaagent:/otel/opentelemetry-javaagent.jar"
+            - "-jar"
+            - "/app/app.jar"
+
           ports:
             - containerPort: 8081
 
@@ -55,6 +62,25 @@ spec:
             failureThreshold: 3
 
           env:
+
+            - name: OTEL_SERVICE_NAME
+              value: user-service
+
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://tempo.tempo.svc.cluster.local:4318
+
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: http/protobuf
+
+            - name: OTEL_TRACES_EXPORTER
+              value: otlp
+
+            - name: OTEL_METRICS_EXPORTER
+              value: none
+
+            - name: OTEL_LOGS_EXPORTER
+              value: none
+
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
