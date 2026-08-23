@@ -24,7 +24,7 @@ resources:
 
   - monitoring/servicemonitor.yaml
   - monitoring/alerts/devsecops-alerts.yaml
-
+  - monitoring/alloy/application.yaml
   
 
 images:
