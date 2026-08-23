@@ -40,6 +40,14 @@ alertmanager:
 
 grafana:
   enabled: true
+  
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      uid: loki
+      url: http://loki-gateway.loki.svc.cluster.local
+      access: proxy
+      isDefault: false
 
 prometheus:
   enabled: true
