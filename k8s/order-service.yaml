@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: order-service
   namespace: devsecops
@@ -7,11 +7,7 @@ metadata:
 spec:
   replicas: 1
 
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+  revisionHistoryLimit: 3
 
   selector:
     matchLabels:
@@ -62,7 +58,6 @@ spec:
             failureThreshold: 3
 
           env:
-
             - name: OTEL_SERVICE_NAME
               value: order-service
 
@@ -80,7 +75,6 @@ spec:
 
             - name: OTEL_LOGS_EXPORTER
               value: none
-
 
             - name: DB_HOST
               valueFrom:
@@ -114,9 +108,20 @@ spec:
                 secretKeyRef:
                   name: devsecops-secrets
                   key: JWT_SECRET
-                  
+
             - name: PRODUCT_SERVICE_URL
               value: http://product-service:8082
+
+  strategy:
+    blueGreen:
+      activeService: order-service
+      previewService: order-service-preview
+
+      autoPromotionEnabled: false
+
+      scaleDownDelaySeconds: 30
+
+      previewReplicaCount: 1
 
 ---
 
@@ -124,6 +129,27 @@ apiVersion: v1
 kind: Service
 metadata:
   name: order-service
+  namespace: devsecops
+  labels:
+    app: order-service
+
+spec:
+  selector:
+    app: order-service
+
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+
+  type: ClusterIP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service-preview
   namespace: devsecops
   labels:
     app: order-service
