@@ -16,9 +16,9 @@ vpc:
         id: subnet-0252ed7191bc31f7a
 
 managedNodeGroups:
-  - name: devsecops-nodes
-    instanceType: t3.small
-    desiredCapacity: 1
-    minSize: 1
+  - name: devsecops-nodes-c7i
+    instanceType: c7i-flex.large
+    desiredCapacity: 2
+    minSize: 2
     maxSize: 4
     privateNetworking: true
