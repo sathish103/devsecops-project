@@ -28,14 +28,14 @@ resources:
   
 
 images:
-  - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service
+  - name: 124666675720.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service
     newTag: "48"
 
-  - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-product-service
+  - name: 124666675720.dkr.ecr.ap-south-1.amazonaws.com/devsecops-product-service
     newTag: "48"
 
-  - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-order-service
+  - name: 124666675720.dkr.ecr.ap-south-1.amazonaws.com/devsecops-order-service
     newTag: "48"
 
-  - name: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-frontend
+  - name: 124666675720.dkr.ecr.ap-south-1.amazonaws.com/devsecops-frontend
     newTag: "48"

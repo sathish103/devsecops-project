@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service
+          image: 124666675720.dkr.ecr.ap-south-1.amazonaws.com/devsecops-user-service
 
           command:
             - java

@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-product-service
+          image: 124666675720.dkr.ecr.ap-south-1.amazonaws.com/devsecops-product-service
 
           command:
             - java

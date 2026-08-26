@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: 425034746703.dkr.ecr.ap-south-1.amazonaws.com/devsecops-order-service
+          image: 124666675720.dkr.ecr.ap-south-1.amazonaws.com/devsecops-order-service
 
           command:
             - java
