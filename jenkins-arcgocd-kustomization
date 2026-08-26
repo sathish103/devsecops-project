@@ -3,7 +3,7 @@ pipeline{
 
     environment {
         AWS_REGION = 'ap-south-1'
-        ECR_REGISTRY =  '425034746703.dkr.ecr.ap-south-1.amazonaws.com'
+        ECR_REGISTRY =  '124666675720.dkr.ecr.ap-south-1.amazonaws.com'
         TRIVY_CACHE_DIR = '/var/lib/trivy'
         TMPDIR = '/var/lib/trivy-tmp'
 
