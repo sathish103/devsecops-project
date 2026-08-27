@@ -1,486 +1,562 @@
-Project Overview
+# DevSecOps E-Commerce Platform on AWS EKS
 
-This project is a production-style DevSecOps implementation for a microservices-based e-commerce application running on Amazon EKS.
+## Overview
 
-The project demonstrates how an application can be developed, tested, security-scanned, containerized, deployed, and monitored using modern DevOps, DevSecOps, GitOps, and cloud-native technologies.
+This project demonstrates the implementation of a complete **DevSecOps delivery platform for a containerized microservices-based e-commerce application on AWS**.
 
-The infrastructure is hosted on AWS, with Amazon EKS used as the Kubernetes platform. The application is deployed using Argo CD and Argo Rollouts, while Jenkins is responsible for the CI pipeline. Security and code-quality checks are integrated into the CI process using tools such as SonarQube, Trivy, and Gitleaks.
+The objective of the project is to build an end-to-end platform where application source code moves through development, security validation, containerization, continuous integration, GitOps-based deployment, controlled production rollout, and continuous observability.
 
-For observability, the project uses Prometheus and Grafana for metrics, Loki and Grafana Alloy for logs, and OpenTelemetry with Grafana Tempo for distributed tracing.
+The application runs on **Amazon Elastic Kubernetes Service (Amazon EKS)** and consists of a frontend and three backend microservices. The platform integrates **Jenkins, SonarQube, Gitleaks, Trivy, Amazon ECR, Argo CD, Argo Rollouts, Prometheus, Grafana, Loki, Grafana Alloy, OpenTelemetry, and Grafana Tempo**.
 
-The overall implementation follows this flow:
+The project is designed to demonstrate how DevOps and security practices can be integrated into a single Kubernetes-based application delivery workflow rather than treating security, deployment, and monitoring as separate activities.
 
-Developer
-   |
-   v
-GitHub Repository
-   |
-   v
-Jenkins CI Pipeline
-   |
-   +--> Build
-   +--> Unit Tests
-   +--> SonarQube Code Analysis
-   +--> Gitleaks Secret Scanning
-   +--> Docker Image Build
-   +--> Trivy Image Scanning
-   |
-   v
-Amazon ECR
-   |
-   v
-GitHub Kubernetes Manifests
-   |
-   v
-Argo CD
-   |
-   v
-Amazon EKS
-   |
-   +-------------------------------+
-   |                               |
-   v                               v
-Application Services          Observability
-                               |
-                               +--> Prometheus
-                               +--> Grafana
-                               +--> Loki
-                               +--> Alloy
-                               +--> OpenTelemetry
-                               +--> Tempo
-Application Overview
+---
 
-The application is a small e-commerce platform implemented using a microservices architecture.
+## What This Project Demonstrates
 
-Instead of building the entire application as one large service, the backend is divided into independent services. Each service is responsible for a specific business capability and can be developed, built, deployed, scaled, and monitored independently.
+The project covers the following areas:
 
-The application contains the following major components:
+* AWS networking and infrastructure design
+* Amazon VPC with public, private, and data subnets
+* Bastion host for controlled administrative access
+* Private Jenkins server
+* Amazon EKS cluster deployment
+* Amazon RDS MySQL
+* Amazon ECR container registry
+* Kubernetes application deployment
+* CI pipeline using Jenkins
+* Static code analysis using SonarQube
+* Secret detection using Gitleaks
+* Container vulnerability scanning using Trivy
+* GitOps-based continuous delivery using Argo CD
+* Blue-Green deployment using Argo Rollouts
+* Kubernetes Gateway API
+* AWS Load Balancer Controller
+* Route 53 DNS
+* ACM TLS certificates
+* Prometheus-based metrics collection
+* Alertmanager email notifications
+* Grafana dashboards
+* Loki centralized logging
+* Grafana Alloy log collection
+* OpenTelemetry-based distributed tracing
+* Grafana Tempo trace storage
+* Amazon S3 for persistent Loki and Tempo data
 
-                         Frontend
+---
+
+# Application Architecture
+
+The application is implemented as a microservices-based e-commerce platform.
+
+It contains four primary application components:
+
+### Frontend
+
+The frontend provides the user interface through which users can register, log in, view products, and place orders.
+
+### User Service
+
+The User Service manages user registration and authentication.
+
+It is responsible for:
+
+* User registration
+* User login
+* Credential validation
+* JWT token generation
+* User-related operations
+
+### Product Service
+
+The Product Service manages the products available in the application.
+
+It is responsible for:
+
+* Creating products
+* Retrieving products
+* Managing product information
+* Maintaining product price and quantity
+
+### Order Service
+
+The Order Service manages customer orders.
+
+It is responsible for:
+
+* Creating orders
+* Processing order requests
+* Maintaining order information
+* Associating orders with users and products
+
+---
+
+## Application Service Communication
+
+The application services communicate through Kubernetes Services.
+
+```text
+                         Internet
                             |
                             v
-                    Application Gateway
+                       Application
+                         Frontend
                             |
               +-------------+-------------+
               |             |             |
               v             v             v
-        User Service   Product Service  Order Service
+        User Service  Product Service  Order Service
               |             |             |
               +-------------+-------------+
                             |
                             v
                        MySQL / RDS
+```
 
-The application is deployed inside the devsecops Kubernetes namespace.
+Each backend service runs independently inside the Kubernetes cluster.
 
-Application Services
-1. Frontend
+Kubernetes provides service discovery and networking between the services, allowing pods to be replaced or scaled without changing the service endpoints used by other components.
 
-The Frontend is the user-facing part of the application.
+---
 
-Users interact with the application through the frontend to perform operations such as:
+# Database Architecture
 
-User registration
-User login
-Viewing products
-Creating orders
-Interacting with the e-commerce application
+The backend uses **Amazon RDS for MySQL** as the relational database platform.
 
-The frontend communicates with the backend microservices through HTTP APIs.
+The project uses separate logical databases for the individual backend services:
 
-The frontend is packaged as a container image and deployed into Amazon EKS.
-
-Its deployment is managed through Kubernetes manifests and Argo CD.
-
-2. User Service
-
-The User Service is responsible for user-related functionality.
-
-Its responsibilities include:
-
-User registration
-User authentication
-Login
-JWT token generation
-User-related operations
-
-The service exposes REST APIs that are consumed by the frontend and other application components.
-
-The User Service uses its own logical database:
-
-userdb
-
-This keeps user-related data separated from product and order data.
-
-The service runs on port:
-
-8081
-
-A health endpoint is available through:
-
-/actuator/health
-
-This endpoint is useful for Kubernetes health checks and operational verification.
-
-3. Product Service
-
-The Product Service manages the products available in the application.
-
-Its responsibilities include:
-
-Creating products
-Retrieving products
-Managing product information
-Maintaining product quantity and price
-
-The Product Service uses its own logical database:
-
-productdb
-
-The service runs on port:
-
-8082
-
-It also exposes an application health endpoint:
-
-/actuator/health
-
-Product APIs are protected where required using the authentication token generated by the User Service.
-
-4. Order Service
-
-The Order Service is responsible for order-related operations.
-
-Its responsibilities include:
-
-Creating orders
-Processing product orders
-Maintaining order information
-Connecting order information with users and products
-
-The service uses its own logical database:
-
-orderdb
-
-The Order Service runs on:
-
-8083
-
-and exposes:
-
-/actuator/health
-
-The service requires authentication for protected order operations.
-
-Database Architecture
-
-The application uses Amazon RDS for MySQL as its relational database.
-
-Rather than creating a separate RDS instance for every microservice, the project uses one MySQL instance with separate logical databases:
-
+```text
 Amazon RDS MySQL
-        |
-        +-- userdb
-        |
-        +-- productdb
-        |
-        +-- orderdb
+│
+├── userdb
+├── productdb
+└── orderdb
+```
 
-This provides logical separation between application services while keeping the infrastructure relatively simple for the project.
+The RDS instance is deployed in dedicated data subnets within the VPC.
 
-The RDS instance is deployed in the data subnets, which are private subnets and are not directly exposed to the public internet.
+The database is not directly exposed to the public internet. Access is controlled through AWS security groups, allowing connections only from the required infrastructure and Kubernetes workloads.
 
-Application pods running inside EKS communicate with RDS through the VPC networking layer and appropriate security-group rules.
+---
 
-Authentication Flow
+# DevSecOps Architecture
 
-Authentication is handled by the User Service using JWT-based authentication.
+The project implements security and quality checks as part of the application delivery process.
 
-The basic flow is:
+The high-level CI workflow is:
 
+```text
+Developer
+    |
+    v
+  GitHub
+    |
+    v
+ Jenkins
+    |
+    +---- Source Checkout
+    |
+    +---- Build
+    |
+    +---- Unit Tests
+    |
+    +---- SonarQube Analysis
+    |
+    +---- Gitleaks Secret Scan
+    |
+    +---- Docker Image Build
+    |
+    +---- Trivy Image Scan
+    |
+    v
+Amazon ECR
+```
+
+This approach ensures that security and quality validation happen before application images are used for deployment.
+
+### SonarQube
+
+SonarQube performs static code analysis and helps identify:
+
+* Bugs
+* Code smells
+* Maintainability issues
+* Security-related code issues
+* Overall code quality
+
+### Gitleaks
+
+Gitleaks scans the source repository for accidentally committed secrets such as:
+
+* Passwords
+* API keys
+* Tokens
+* Credentials
+* Other sensitive values
+
+### Trivy
+
+Trivy scans container images for known vulnerabilities before they are deployed into the Kubernetes environment.
+
+---
+
+# GitOps and Continuous Delivery
+
+After the CI process produces a validated container image, deployment is handled using a GitOps approach.
+
+**Argo CD** is responsible for synchronizing the Kubernetes configuration stored in Git with the actual state of the EKS cluster.
+
+```text
+                  GitHub
+                    |
+          Kubernetes Manifests
+                    |
+                    v
+                 Argo CD
+                    |
+                    v
+                Amazon EKS
+                    |
+                    v
+             Application Pods
+```
+
+Git acts as the source of truth for the Kubernetes deployment configuration.
+
+This separates the responsibilities of the CI and CD systems:
+
+* **Jenkins** — builds, tests, and scans the application
+* **Amazon ECR** — stores container images
+* **GitHub** — stores application and Kubernetes configuration
+* **Argo CD** — synchronizes Kubernetes resources
+* **Amazon EKS** — runs the application
+
+---
+
+# Blue-Green Deployment
+
+The project uses **Argo Rollouts** to implement controlled Blue-Green deployments.
+
+Instead of immediately replacing the running production version, a new application version is deployed as a preview version.
+
+The new version can then be tested before it receives production traffic.
+
+```text
+                  Application
+                       |
+              +--------+--------+
+              |                 |
+              v                 v
+           Stable            Preview
+           Version            Version
+              |                 |
+              |              Validation
+              |                 |
+              +--------+--------+
+                       |
+                  Manual Promote
+                       |
+                       v
+                 New Stable Version
+```
+
+This allows the deployment process to validate a new release before promoting it to production.
+
+If the new version fails validation, it can be rejected without immediately replacing the stable version.
+
+---
+
+# Kubernetes Platform
+
+The application runs on **Amazon EKS**.
+
+The Kubernetes environment is divided into multiple namespaces according to responsibility.
+
+Examples include:
+
+```text
+devsecops
+argocd
+argo-rollouts
+monitoring
+loki
+tempo
+alloy
+kube-system
+```
+
+The cluster also uses AWS-integrated components for production-style networking and infrastructure management.
+
+These include:
+
+* AWS Load Balancer Controller
+* Kubernetes Gateway API
+* Cluster Autoscaler
+* Amazon EBS CSI Driver
+* EKS Pod Identity
+
+---
+
+# AWS Infrastructure
+
+The project uses a dedicated VPC with separate subnet groups for different workloads.
+
+```text
+AWS VPC
+10.0.0.0/16
+│
+├── Public Subnets
+│   ├── 10.0.1.0/24
+│   └── 10.0.2.0/24
+│
+├── Private Subnets
+│   ├── 10.0.11.0/24
+│   └── 10.0.12.0/24
+│
+└── Data Subnets
+    ├── 10.0.21.0/24
+    └── 10.0.22.0/24
+```
+
+The public subnets are used for internet-facing infrastructure such as the bastion host and networking components.
+
+The private subnets are used for internal infrastructure and Kubernetes workloads.
+
+The data subnets are dedicated to data-layer resources such as Amazon RDS.
+
+A NAT Gateway provides controlled outbound internet access for resources located in private subnets.
+
+---
+
+# External Access
+
+The application is exposed through an AWS Application Load Balancer managed by the **AWS Load Balancer Controller**.
+
+The project uses:
+
+* Route 53 for DNS
+* ACM for TLS certificates
+* Kubernetes Gateway API for application routing
+* AWS Load Balancer Controller for AWS load-balancer integration
+
+The external request flow is:
+
+```text
 User
  |
  v
-Frontend
+Route 53
  |
  v
-User Service
- |
- +--> Validate credentials
- |
- +--> Generate JWT
+HTTPS / ACM
  |
  v
-Frontend receives JWT
+AWS Application Load Balancer
  |
  v
-JWT used for protected API requests
+Kubernetes Gateway
  |
- +--> Product Service
+ v
+Application Services
  |
- +--> Order Service
+ v
+EKS Pods
+```
 
-For example, when a user logs in, the User Service validates the credentials and generates a JWT token.
+This provides HTTPS-based access to the application while keeping the backend workloads inside the Kubernetes environment.
 
-The frontend can then use that token when accessing protected backend APIs.
+---
 
-Microservices Communication
+# Observability
 
-The backend services communicate using HTTP/REST APIs.
+Observability is implemented across three areas:
 
-Inside Kubernetes, services are accessed using Kubernetes service names rather than public IP addresses.
+## Metrics
 
-For example:
+**Prometheus** collects infrastructure and application metrics.
 
-user-service:8081
-product-service:8082
-order-service:8083
+**Grafana** provides dashboards for visualizing those metrics.
 
-This allows Kubernetes to provide service discovery and load balancing between application pods.
+The monitoring stack is used to observe:
 
-A simplified internal communication model is:
+* Kubernetes resources
+* Application health
+* Request rates
+* Error rates
+* Resource utilization
+* Application performance
 
-Frontend
-   |
-   +----> user-service:8081
-   |
-   +----> product-service:8082
-   |
-   +----> order-service:8083
+---
 
-Kubernetes Services provide stable network endpoints even when individual application pods are replaced, restarted, or scaled.
+## Logging
 
-DevSecOps Pipeline
+Application and Kubernetes logs are collected using **Grafana Alloy** and sent to **Grafana Loki**.
 
-The project integrates security and quality checks directly into the CI pipeline.
-
-The intended pipeline is:
-
-Git Push
-   |
-   v
-Jenkins
-   |
-   +--> Source Checkout
-   |
-   +--> Build
-   |
-   +--> Unit Tests
-   |
-   +--> SonarQube Analysis
-   |
-   +--> Gitleaks Secret Scan
-   |
-   +--> Docker Build
-   |
-   +--> Trivy Image Scan
-   |
-   v
-Amazon ECR
-
-This ensures that security and quality checks happen before application images are promoted for deployment.
-
-GitOps Deployment
-
-The project follows a GitOps deployment model using Argo CD.
-
-Jenkins is responsible for the CI side of the process, while Argo CD is responsible for maintaining the desired Kubernetes state.
-
-The general model is:
-
-Developer
-   |
-   v
-GitHub
-   |
-   v
-Jenkins
-   |
-   +--> Build / Test / Scan
-   |
-   v
-Container Image
-   |
-   v
-Amazon ECR
-
-GitHub Kubernetes Manifests
-   |
-   v
-Argo CD
-   |
-   v
-Amazon EKS
-
-Argo CD continuously compares the Kubernetes resources defined in Git with the actual state of the cluster.
-
-This provides a clear separation between:
-
-CI: Jenkins
-Container Registry: Amazon ECR
-Source of Deployment Truth: GitHub
-CD/GitOps: Argo CD
-Runtime Platform: Amazon EKS
-Blue-Green Deployment
-
-The project uses Argo Rollouts to implement controlled application deployments.
-
-For supported services, a new version is deployed alongside the currently running version.
-
-Conceptually:
-
-                 Application
-                     |
-              +------+------+
-              |             |
-              v             v
-          Stable          Preview
-          Version          Version
-             |                |
-          Production       Testing
-
-The new version is first deployed as the preview version.
-
-Before promoting it to production, the preview pods can be tested internally.
-
-If the new version is healthy, the rollout can be promoted.
-
-If there is a problem, the new version can be rejected without immediately replacing the stable production version.
-
-This provides a safer deployment mechanism than immediately replacing all production pods.
-
-Observability Architecture
-
-The project includes three major observability areas:
-
-Metrics
-
-Prometheus collects metrics from the Kubernetes cluster and applications.
-
-Application / Kubernetes
-          |
-          v
-      Prometheus
-          |
-          v
-       Grafana
-
-Metrics can be used to monitor:
-
-Request rates
-Error rates
-Resource usage
-Kubernetes workloads
-Application performance
-Logs
-
-Grafana Alloy collects application and Kubernetes logs and sends them to Loki.
-
+```text
 Kubernetes Pods
-      |
-      v
-Grafana Alloy
-      |
-      v
-     Loki
-      |
-      v
-   Grafana
+       |
+       v
+ Grafana Alloy
+       |
+       v
+      Loki
+       |
+       v
+    Grafana
+```
 
-Loki stores log data in Amazon S3, providing persistent log storage.
+Loki uses Amazon S3 as persistent object storage for log data.
 
-Tracing
+This allows logs to remain available even when Kubernetes pods are recreated.
 
-The project uses OpenTelemetry and Grafana Tempo for distributed tracing.
+---
 
+## Distributed Tracing
+
+The project uses **OpenTelemetry** and **Grafana Tempo** to implement distributed tracing.
+
+```text
 Application
-    |
-    v
+     |
+     v
 OpenTelemetry
-    |
-    v
-Collector / Alloy
-    |
-    v
-Tempo
-    |
-    v
-Grafana
+     |
+     v
+Grafana Alloy / Collector
+     |
+     v
+   Tempo
+     |
+     v
+  Grafana
+```
 
-Tracing makes it possible to follow a request across different microservices and understand where time is being spent.
+Tracing provides visibility into the path of a request across multiple microservices.
 
-Complete Application + DevSecOps Architecture
+For example, a single user request can be followed as it moves through the frontend, User Service, Product Service, and Order Service.
 
-The complete project can therefore be understood as several layers:
+---
 
-                         USERS
-                           |
-                           v
-                  Route 53 + ACM
-                           |
-                           v
-              AWS Load Balancer Controller
-                           |
-                           v
-                    Gateway API / ALB
-                           |
-                           v
-                     EKS Cluster
-                           |
-          +----------------+----------------+
-          |                |                |
-          v                v                v
-      Frontend        User Service     Product Service
-                                           |
-                                           v
-                                     Order Service
-          |                |                |
-          +----------------+----------------+
-                           |
-                           v
-                       RDS MySQL
+# Security Architecture
+
+Security is implemented at multiple layers rather than relying on a single security tool.
+
+### Infrastructure Security
+
+* Private subnets for internal workloads
+* Dedicated data subnets for RDS
+* Security groups controlling network access
+* Bastion host for administrative access
+* IAM roles for AWS resource access
+
+### CI Security
+
+* SonarQube for source-code analysis
+* Gitleaks for secret detection
+* Trivy for container vulnerability scanning
+
+### Kubernetes Security
+
+* Kubernetes namespaces
+* Kubernetes Secrets for application configuration
+* IAM-based workload access
+* EKS Pod Identity
+* Controlled AWS security-group access
+
+### Data Security
+
+* Private RDS deployment
+* S3 public-access blocking
+* S3 encryption
+* IAM-controlled access to Loki and Tempo storage
+
+---
+
+# Complete Project Flow
+
+The complete lifecycle of the project can be summarized as:
+
+```text
+                    Developer
+                        |
+                        v
+                     GitHub
+                        |
+                        v
+                     Jenkins
+                        |
+        +---------------+---------------+
+        |               |               |
+        v               v               v
+    SonarQube         Gitleaks        Trivy
+        |               |               |
+        +---------------+---------------+
+                        |
+                        v
+                  Docker Image
+                        |
+                        v
+                    Amazon ECR
+                        |
+                        |
+             Kubernetes Manifests
+                        |
+                        v
+                     Argo CD
+                        |
+                        v
+                  Argo Rollouts
+                        |
+                        v
+                   Amazon EKS
+                        |
+          +-------------+-------------+
+          |             |             |
+          v             v             v
+       Frontend     User Service  Product Service
+                                      |
+                                      v
+                                Order Service
+                                      |
+                                      v
+                                  RDS MySQL
 
 
-              CI / CD / GitOps Layer
-              -----------------------
-                           |
-                       GitHub
-                           |
-                       Jenkins
-                           |
-                +----------+----------+
-                |          |          |
-             SonarQube  Gitleaks    Trivy
-                |
-                v
-              ECR
-                |
-                v
-             Argo CD
-                |
-                v
-          Argo Rollouts
-                |
-                v
-             EKS
+                 Observability
+                       |
+        +--------------+--------------+
+        |              |              |
+        v              v              v
+    Prometheus        Loki          Tempo
+        |              ^              ^
+        |              |              |
+        |            Alloy       OpenTelemetry
+        |              |              |
+        +--------------+--------------+
+                       |
+                       v
+                    Grafana
+```
 
+---
 
-              Observability Layer
-              -------------------
-                           |
-          +----------------+----------------+
-          |                |                |
-          v                v                v
-      Prometheus          Loki            Tempo
-          |                ^                ^
-          |                |                |
-          |             Alloy          OpenTelemetry
-          |                |                |
-          +----------------+----------------+
-                           |
-                           v
-                        Grafana
+# Project Goal
 
-This gives the project a complete lifecycle:
+The goal of this project is not simply to deploy a Java application into Kubernetes.
 
-Code → Security → Build → Containerize → Registry → GitOps → Kubernetes → Controlled Deployment → Metrics → Logs → Traces → Visualization.
+The project demonstrates a complete engineering workflow in which **application development, security, infrastructure, CI/CD, GitOps, deployment strategy, cloud integration, and observability work together as one platform**.
+
+The final environment provides:
+
+* A microservices-based application running on EKS
+* Automated CI with security and quality checks
+* Container images stored in Amazon ECR
+* GitOps-based deployment through Argo CD
+* Blue-Green deployments through Argo Rollouts
+* AWS-managed networking and DNS
+* Secure connectivity to Amazon RDS
+* Centralized metrics, logs, and traces
+* Grafana-based observability
+* Persistent log and trace storage using Amazon S3
+
+The implementation section that follows this overview explains how each layer is built and configured step by step.
