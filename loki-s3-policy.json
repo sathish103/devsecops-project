@@ -7,7 +7,7 @@
         "s3:ListBucket",
         "s3:GetBucketLocation"
       ],
-      "Resource": "arn:aws:s3:::devsecops-loki-ap-south-1-425034746703"
+      "Resource": "arn:aws:s3:::devsecops-loki-ap-south-1-124666675720"
     },
     {
       "Effect": "Allow",
@@ -16,7 +16,7 @@
         "s3:GetObject",
         "s3:DeleteObject"
       ],
-      "Resource": "arn:aws:s3:::devsecops-loki-ap-south-1-425034746703/*"
+      "Resource": "arn:aws:s3:::devsecops-loki-ap-south-1-124666675720/*"
     }
   ]
 }

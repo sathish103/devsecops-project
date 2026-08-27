@@ -8,7 +8,7 @@
         "s3:ListBucket",
         "s3:GetBucketLocation"
       ],
-      "Resource": "arn:aws:s3:::devsecops-tempo-ap-south-1-425034746703"
+      "Resource": "arn:aws:s3:::devsecops-tempo-ap-south-1-124666675720"
     },
     {
       "Sid": "TempoObjectAccess",
@@ -20,7 +20,7 @@
         "s3:GetObjectTagging",
         "s3:PutObjectTagging"
       ],
-      "Resource": "arn:aws:s3:::devsecops-tempo-ap-south-1-425034746703/*"
+      "Resource": "arn:aws:s3:::devsecops-tempo-ap-south-1-124666675720/*"
     }
   ]
 }
