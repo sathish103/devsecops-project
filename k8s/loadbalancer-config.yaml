@@ -8,6 +8,6 @@ spec:
   
   listenerConfigurations:
     - protocolPort: HTTPS:443
-      defaultCertificate: arn:aws:acm:ap-south-1:124666675720:certificate/09447a50-5f62-4d14-99e4-05d42f74926d
+      defaultCertificate: arn:aws:acm:ap-south-1:124666675720:certificate/9197e520-ad97-4525-a8e1-e5080148db36
 
   
