@@ -8,7 +8,7 @@ tempo:
     trace:
       backend: s3
       s3:
-        bucket: devsecops-tempo-ap-south-1-425034746703
+        bucket: devsecops-tempo-ap-south-1-124666675720
         endpoint: s3.ap-south-1.amazonaws.com
         region: ap-south-1
         insecure: false

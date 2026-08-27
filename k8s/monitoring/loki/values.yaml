@@ -9,9 +9,9 @@ loki:
   storage:
     type: s3
     bucketNames:
-      chunks: devsecops-loki-ap-south-1-425034746703
-      ruler: devsecops-loki-ap-south-1-425034746703
-      admin: devsecops-loki-ap-south-1-425034746703
+      chunks: devsecops-loki-ap-south-1-124666675720
+      ruler: devsecops-loki-ap-south-1-124666675720
+      admin: devsecops-loki-ap-south-1-124666675720
 
     s3:
       region: ap-south-1
