@@ -1975,7 +1975,7 @@ github-ssh
 Jenkinsfile:
 
 ```text
-jenkins-arcgocd-kustomization/Jenkinsfile
+jenkins-arcgocd-kustomization
 ```
 
 Save and trigger a build.
