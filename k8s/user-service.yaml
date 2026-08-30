@@ -124,12 +124,12 @@ spec:
       autoPromotionEnabled: false
 
       prePromotionAnalysis:
-      templates:
-        - templateName: user-service-pre-promotion
+        templates:
+          - templateName: user-service-pre-promotion
       
-      args:
-        - name: service-name
-          value: user-service-preview
+        args:
+          - name: service-name
+            value: user-service-preview
 
       scaleDownDelaySeconds: 30
 
