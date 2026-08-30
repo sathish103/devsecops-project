@@ -25,6 +25,8 @@ resources:
   - monitoring/servicemonitor.yaml
   - monitoring/alerts/devsecops-alerts.yaml
 
+  - rollout-analysis/user-service-analysis.yaml
+
   
 
 images:
