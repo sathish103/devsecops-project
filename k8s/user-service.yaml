@@ -8,6 +8,9 @@ spec:
 
   revisionHistoryLimit: 3
 
+  rollbackWindow:
+    revisions: 3
+
   selector:
     matchLabels:
       app: user-service
@@ -119,6 +122,14 @@ spec:
       previewService: user-service-preview
 
       autoPromotionEnabled: false
+
+      prePromotionAnalysis:
+      templates:
+        - templateName: user-service-pre-promotion
+      
+      args:
+        - name: service-name
+          value: user-service-preview
 
       scaleDownDelaySeconds: 30
 
